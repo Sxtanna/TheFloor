@@ -53,3 +53,10 @@
 .split-pane-divider {
     -fx-background-color: transparent;
 }
+
+
+/*everything else*/
+
+.text{
+    -fx-font-smoothing-type: gray;
+}
