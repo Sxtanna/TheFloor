@@ -9,5 +9,6 @@ fun main(args: Array<String>) {
 
 
 private fun startWithJfx() {
+    System.setProperty("javax.xml.parsers.DocumentBuilderFactory",  "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl")
     Application.launch(BBYWJfx::class.java)
 }
