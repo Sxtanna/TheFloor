@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="root" prefHeight="1080" prefWidth="1920" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
+   <ToolBar fx:id="tool" prefHeight="150.0" prefWidth="1920.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <items>
+         <BorderPane fx:id="bord" prefHeight="150.0" prefWidth="1900.0">
+            <left>
+               <StackPane fx:id="pane" alignment="CENTER_LEFT" prefHeight="120.0" prefWidth="960.0" BorderPane.alignment="CENTER_LEFT">
+                  <children>
+                     <Rectangle fx:id="rect" arcHeight="36.0" arcWidth="36.0" fill="WHITE" height="100.0" stroke="TRANSPARENT" strokeType="INSIDE" width="1000.0" />
+                     <JFXTextField fx:id="text" focusColor="TRANSPARENT" promptText="Search Everywhere" style="-fx-accent: #959aa2;" unFocusColor="TRANSPARENT">
+                        <font>
+                           <Font name="Lato Bold" size="35.0" />
+                        </font>
+                        <padding>
+                           <Insets left="90.0" />
+                        </padding>
+                     </JFXTextField>
+                  </children>
+                  <padding>
+                     <Insets left="20.0" />
+                  </padding>
+               </StackPane>
+            </left>
+            <right>
+               <BorderPane fx:id="anch" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+            </right>
+         </BorderPane>
+      </items>
+   </ToolBar>
+   <AnchorPane fx:id="body" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="160.0">
+      <children>
+         <HBox fx:id="hbox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+               <AnchorPane fx:id="sideL" prefHeight="200.0" prefWidth="200.0">
+                  <children>
+                     <ScrollPane fx:id="scrl" fitToWidth="true" hbarPolicy="NEVER" pannable="true" prefHeight="200.0" prefWidth="200.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     </ScrollPane>
+                  </children></AnchorPane>
+               <AnchorPane fx:id="sideR" prefHeight="200.0" prefWidth="200.0" />
+            </children>
+         </HBox>
+      </children>
+   </AnchorPane>
+   <!--<AnchorPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="160.0">
+      <children>
+         <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+             <AnchorPane fx:id="sideL" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                  <children>
+                     <ScrollPane fx:id="scrl" hbarPolicy="NEVER" prefHeight="916.0" prefWidth="1920.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <content>
+                           <JFXMasonryPane fx:id="tile" cellHeight="60.0" cellWidth="90.0" prefHeight="927.0" prefWidth="1920.0">
+                              <padding>
+                                 <Insets left="40.0" top="40.0" />
+                              </padding>
+                           </JFXMasonryPane>
+                        </content>
+                     </ScrollPane>
+                  </children>
+               </AnchorPane>
+             <AnchorPane fx:id="sideR" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                  <children>
+                     <TabPane fx:id="tabs" prefHeight="930.0" prefWidth="817.0" side="RIGHT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
+                       <tabs>
+                         <Tab closable="false" text="DOT COM">
+                           <content>
+                             <AnchorPane fx:id="site" minHeight="900.0" minWidth="0.0" prefHeight="1000.0" prefWidth="200.0" />
+                           </content>
+                         </Tab>
+                       </tabs>
+                     </TabPane>
+                  </children>
+               </AnchorPane>
+            </children>
+         </HBox>
+      </children>
+   </AnchorPane>-->
+</AnchorPane>
