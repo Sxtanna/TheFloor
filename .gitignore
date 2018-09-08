@@ -8,3 +8,9 @@ build/
 
 # Allow gradle wrapper
 !*gradle-wrapper.jar
+
+# Let's not leak my jxbrowser license
+/gradle/lib/license.jar
+
+# Let's not leak company documents
+/src/main/resources/com/sxtanna/bby/jfx/docs/docs.korm
