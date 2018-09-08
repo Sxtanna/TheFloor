@@ -1,24 +1,25 @@
 package com.sxtanna.bby.jfx
 
-import com.jfoenix.controls.JFXScrollPane
 import com.jfoenix.controls.JFXTextField
 import com.jfoenix.effects.JFXDepthManager
 import com.sxtanna.bby.base.*
 import com.sxtanna.bby.jfx.anim.FadeDir
 import com.sxtanna.bby.jfx.anim.fade
-import com.sxtanna.bby.jfx.web.BBYWBrowser
+import com.sxtanna.bby.jfx.view.BigViewManager
+import com.sxtanna.korm.Korm
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
+import javafx.scene.input.MouseButton
 import javafx.scene.layout.*
 
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Font
-import javafx.scene.text.Text
-import javafx.scene.web.WebView
+import javafx.scene.text.FontWeight
 import tornadofx.*
+import java.net.URLEncoder
 
 
 class MainWindow : View("Best Buy Work") {
@@ -45,24 +46,30 @@ class MainWindow : View("Best Buy Work") {
     // body
     private val body by fxid<AnchorPane>()
 
-    private val sideL by fxid<AnchorPane>()
-    private val sideR by fxid<AnchorPane>()
+    internal val sideL by fxid<AnchorPane>()
+    internal val sideR by fxid<AnchorPane>()
 
     // side l
     private val scrl by fxid<ScrollPane>()
     private val tile = VBox()
 
     // side r
-    private val view = WebView().anchorAllSides()
-    private val brow = BBYWBrowser()
+    private val view = BigViewManager(this)
+
+
+    val korm = Korm()
+
+    val splash = AppSplash()
+    val panels = AppPanels()
+    val search = AppSearch()
 
 
     init {
-        System.setProperty("sun.net.http.allowRestrictedHeaders", "true")
         setupRoot()
 
-        val splash = AppSplash()
-        splash.init()
+        Resource.load(korm, main.resourceAsStream("docs/docs.korm"))
+
+        view.setupViews()
 
         setupTool()
         setupSideL()
@@ -74,17 +81,16 @@ class MainWindow : View("Best Buy Work") {
         sideL.minWidthProperty().bind(main.stage.minWidthProperty().divide(2.0))
         sideL.maxWidthProperty().bind(main.stage.minWidthProperty().divide(2.0))
 
-        tool.toFront()
-
         // default focus
         root.requestFocus()
 
-        tool.setOnMouseClicked { root.requestFocus() }
+        //tool.setOnMouseClicked { root.requestFocus() }
         root.setOnMouseClicked { root.requestFocus() }
 
         tool.hide()
         body.hide()
 
+        splash.init()
         splash.fade()
     }
 
@@ -105,6 +111,20 @@ class MainWindow : View("Best Buy Work") {
 
         setupToolSearch()
         setupToolPerson()
+
+        tool.setOnMouseClicked {
+            when (it.button) {
+                MouseButton.PRIMARY -> {
+                    view.prev()
+                }
+                MouseButton.SECONDARY -> {
+                    view.next()
+                }
+                else -> {
+
+                }
+            }
+        }
     }
 
     private fun setupToolSearch() {
@@ -127,25 +147,21 @@ class MainWindow : View("Best Buy Work") {
             }
         })
 
+        text.textProperty().onChange {
+            search.submitUpdate(it ?: return@onChange)
+        }
 
-        val urlRegex = Regex("((http:\\/\\/|https:\\/\\/)?(www.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)")
         text.setOnKeyPressed {
             if (it.code != KeyCode.ENTER) return@setOnKeyPressed
+            search.submitSearch(text.text)
+        }
 
-            var input = text.text
-
-            if (urlRegex.matches(input)) {
-
-                if (input.startsWith("http", true).not()) {
-                    input = "http://$input"
+        text.focusedProperty().addListener { _, _, new ->
+            if (new && text.text.isNotBlank()) {
+                main.execute {
+                    text.selectAll()
                 }
-
-                //view.engine.load(input)
-            } else {
-                println("Executing search for $input")
             }
-
-            text.textProperty().set("")
         }
     }
 
@@ -163,22 +179,11 @@ class MainWindow : View("Best Buy Work") {
 
         tile.spacing = 20.0
 
-        val panels = AppPanels()
         panels.init(tile)
-
-        main.execute { scrl.requestLayout() }
-        JFXScrollPane.smoothScrolling(scrl)
     }
 
     private fun setupSideR() {
-        brow.init()
-        brow.view.anchorAllSides()
-
-        brow.show(sideR)
-        brow.load("https://www.bestbuy.com")
-
-        //sideR.add(view)
-        //view.engine.load("https://www.bestbuy.com")
+        view.show()
     }
 
 
@@ -214,14 +219,14 @@ class MainWindow : View("Best Buy Work") {
 
 
         private fun clean() {
+            tool.show()
+            body.show()
+
             logo.hide()
             back.hide()
 
             back.children.remove(logo)
             root.children.remove(back)
-
-            tool.show()
-            body.show()
         }
 
         private fun Pane.stick() {
@@ -235,48 +240,129 @@ class MainWindow : View("Best Buy Work") {
 
     }
 
+
     inner class AppPanels {
 
-        private val panels = mutableListOf<Panel>()
+        val panels = mutableListOf<Panel>()
+        val seeing = mutableListOf<Panel>()
+
+        val noResults = NoResultsPanel()
 
 
         fun init(pane: Pane) {
-            repeat(10) {
-                WelcomePanel()
+            WelcomePanel()
+
+            Resource.values().forEach {
+                DocumentLink(it)
             }
 
-            panels.forEach {
+            WebPagesLink("DOT COM", "https://www.bestbuy.com", "main best buy website")
+            WebPagesLink("My HR", "https://hr.bestbuy.com", "best buy human resources")
+            WebPagesLink("TLC", "https://mytlc.bestbuy.com/etm/", "access time & labor center")
+            WebPagesLink("Employee Hub", "https://hub.bestbuy.com", "best buy employee hub")
+
+            seeing += panels
+
+            seeing.forEach {
                 it.initPanel(pane)
                 it.fillPanel()
+
+                it.showPanel()
             }
+
+            noResults.initPanel(pane)
+            noResults.fillPanel()
         }
 
 
         inner class WelcomePanel : Panel() {
 
-            override fun fillPanel() {
+            override fun fillPanel() = buildTitleSubTitle("Ranald Taylor", "ranald.taylor@bestbuy.com", titleBlock = {
+                it.style(true) {
+                    this.textFill = Color.rgb(BB_BLUE_R, BB_BLUE_G, BB_BLUE_B)
+                }
+            })
 
-                push(Text("Welcome")) {
+        }
 
-                    style = "-fx-font-size: 50"
-                    stackpaneConstraints {
-                        alignment = Pos.TOP_LEFT
-                    }
+        inner class DocumentLink(private val doc: Resource) : Panel() {
 
+            override fun fillPanel() = buildTitleSubTitle(doc.name, "opens on right panel", titleBlock = {
+                it.style(true) {
+                    fontSize = Dimension(45.0, Dimension.LinearUnits.px)
                 }
 
+                setOnMouseClicked { _ ->
+                    if (Tracker.checkCurrent(this@DocumentLink)) {
+                        view.brow.load(doc.link)
+                        text.text = doc.name
+                        search.submitUpdate("")
+                    }
+                }
+            })
+
+            override fun showNamed(text: String): Boolean {
+                return doc.name.contains(text, true)
             }
+
+        }
+
+        inner class WebPagesLink(private val name: String, private val url: String, private val desc: String = "opens on right panel") : Panel() {
+
+            override fun fillPanel() = buildTitleSubTitle(name, desc, titleBlock = {
+                it.style(true) {
+                    fontSize = Dimension(45.0, Dimension.LinearUnits.px)
+                }
+
+                setOnMouseClicked { _ ->
+                    if (Tracker.checkCurrent(this@WebPagesLink)) {
+                        view.brow.load(url)
+                        text.text = name
+                        search.submitUpdate("")
+                    }
+                }
+            })
+
+            override fun showNamed(text: String): Boolean {
+                return name.contains(text, true)
+            }
+
+        }
+
+        inner class NoResultsPanel : Panel() {
+
+            init {
+                panels.remove(this)
+            }
+
+            override fun fillPanel() = buildTitleSubTitle("No Results", "no results for current input", titleBlock = {
+                it.style(true) {
+                    this.textFill = Color.DARKRED
+                }
+            })
 
         }
 
 
         abstract inner class Panel {
 
-            private lateinit var rootPane: Pane
-            private lateinit var tilePane: StackPane
+            lateinit var rootPane: Pane
+                private set
+            lateinit var tilePane: StackPane
+                private set
+
 
             init {
                 panels.add(this)
+            }
+
+
+            fun showPanel() {
+                rootPane.children.add(tilePane)
+            }
+
+            fun hidePanel() {
+                rootPane.children.remove(tilePane)
             }
 
 
@@ -294,32 +380,177 @@ class MainWindow : View("Best Buy Work") {
                 s.add(r)
                 JFXDepthManager.setDepth(r, 4)
 
-                //s.background = backgroundFill(Color.GOLD)
-
-                root.add(s)
-
                 this.rootPane = root
                 this.tilePane = s
             }
 
             open fun fillPanel() = Unit
 
-
-            protected fun <N : Node> push(node: N, block: N.() -> Unit = { }) {
-                tilePane.add(node.apply(block).apply(::applyRectMargins))
+            open fun showNamed(text: String): Boolean {
+                return true
             }
 
 
-            private fun applyRectMargins(node: Node) {
-                node.stackpaneConstraints {
-                    marginTop = 60.0
-                    marginLeft = 60.0
+            protected fun <N : Node> push(node: N, block: N.() -> Unit = { }): N {
+                tilePane.add(node.apply(block))
+                return node
+            }
+
+            protected fun buildTitleSubTitle(titleText: String, subTitleText: String = "", titleBlock: VBox.(Label) -> Unit = { }, subTitleBlock: VBox.(Label) -> Unit = { }) {
+                val vbox = VBox().apply {
+                    alignment = Pos.CENTER
                 }
+
+                vbox.add(Label(titleText).apply {
+                    style(true) {
+                        fontSize = Dimension(65.0, Dimension.LinearUnits.px)
+                        fontWeight = FontWeight.BOLD
+                        fontFamily = "Lato Bold"
+                    }
+                }.apply { vbox.titleBlock(this) })
+
+                vbox.add(Label(subTitleText).apply {
+                    style(true) {
+                        fontSize = Dimension(25.0, Dimension.LinearUnits.px)
+                        fontFamily = "Lato"
+                    }
+                }.apply { vbox.subTitleBlock(this) })
+
+                push(vbox)
             }
 
         }
 
     }
 
+
+    inner class AppSearch { // implement the everywhere search system
+
+        private val engines = Engines()
+        private val regexes = Regexes()
+
+
+        fun submitUpdate(input: String) {
+            if (input.length <= 2 && input.isNotBlank()) return
+
+            panels.seeing.clear()
+
+            if (input.isBlank() || engines.find(input.substringBefore(':', "")) != null) {
+                Tracker.reset()
+                showAsRight()
+
+                panels.seeing += panels.panels
+            } else {
+                val results = panels.panels.filter {
+                    it.showNamed(input)
+                }
+
+                panels.seeing += if (results.size > 1) {
+                    showAsRight()
+                    results
+                } else {
+                    showAsWrong()
+                    listOf(panels.noResults)
+                }
+            }
+
+            panels.noResults.hidePanel()
+            panels.panels.forEach { it.hidePanel() }
+            panels.seeing.forEach { it.showPanel() }
+        }
+
+        fun submitSearch(input: String) {
+            val regex = regexes.find(input)
+
+            when {
+                regex != null -> {
+                    regex.invoke(input)
+                }
+                else -> {
+                    val base = engines.find(input.substringBefore(':')) ?: return
+                    val site = base.replace("{search}", URLEncoder.encode(input.substringAfter(':'), "UTF-8"))
+
+                    view.brow.load(site)
+                }
+            }
+        }
+
+
+        private fun showAsRight() {
+            text.style {
+                textFill = Color.BLACK
+            }
+        }
+
+        private fun showAsWrong() {
+            text.style {
+                textFill = Color.RED
+            }
+        }
+
+
+        private inner class Regexes {
+
+            private val regexes = mutableMapOf<Regex, (String) -> Unit>()
+
+            init {
+                regexes[Regex("((http:\\/\\/|https:\\/\\/)?(www.)?(([a-zA-Z0-9-]){2,}\\.){1,4}([a-zA-Z]){2,6}(\\/([a-zA-Z-_\\/\\.0-9#:?=&;,]*)?)?)")] = {
+                    view.brow.load(it)
+
+                    text.text = view.brow.brow.url
+                    search.submitUpdate("")
+                }
+                regexes[Regex("(.+(\\.pdf))")] = {
+                    view.brow.load(it)
+                }
+            }
+
+
+            fun find(input: String): ((String) -> Unit)? {
+                return regexes.entries.find { it.key.matches(input) }?.value
+            }
+
+        }
+
+        private inner class Engines {
+
+            private val engines = mutableMapOf<String, String>()
+
+            init {
+                engines["google"] = "https://www.google.com/search?q={search}"
+                engines["bb"] = "https://www.bestbuy.com/site/searchpage.jsp?st={search}"
+                engines["bbs"] = "https://stores.bestbuy.com/{search}"
+                engines["amazon"] = "https://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Daps&field-keywords={search}"
+                engines["reddit"] = "https://www.reddit.com/search?q={search}"
+            }
+
+
+            fun find(input: String): String? {
+                return engines[input.toLowerCase().trim()]
+            }
+
+        }
+
+    }
+
+
+    private object Tracker {
+
+        private var current: MainWindow.AppPanels.Panel? = null
+
+        fun reset() {
+            current = null
+        }
+
+        fun checkCurrent(other: MainWindow.AppPanels.Panel): Boolean {
+            if (current !== other) {
+                current = other
+                return true
+            }
+
+            return false
+        }
+
+    }
 
 }
