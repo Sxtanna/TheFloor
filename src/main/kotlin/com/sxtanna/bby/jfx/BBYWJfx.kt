@@ -44,12 +44,11 @@ class BBYWJfx : App(MainWindow::class) {
         stage.minWidth = SP_W * 0.60
         stage.minHeight = SP_H / 2.0
 
-        //stage.maxWidth = SP_W
-
         stage.centerOnScreen()
 
         stage.setOnCloseRequest {
             scheduler.shutdownNow()
+            Runtime.getRuntime().halt(0)
         }
 
         stage.scene.stylesheets.add(resource("css/base.css").toExternalForm())
