@@ -2,7 +2,7 @@ plugins {
     id 'idea'
     id 'application'
     id 'org.jetbrains.kotlin.jvm' version '1.2.61'
-    id 'com.github.johnrengelman.plugin-shadow' version '2.0.3'
+    id 'com.github.johnrengelman.shadow' version '2.0.4'
 }
 
 
@@ -27,7 +27,12 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-reflect"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-
+    
+    // personal libraries
+    compile "com.sxtanna.korm:Korm:+"
+    
+    // local libraries
+    compile fileTree(dir: 'gradle/lib', include: ['*.jar'])
 
     // libraries for jfx
     compile "no.tornado:tornadofx:+"
@@ -40,7 +45,7 @@ dependencies {
     compile "org.processing:pdf:3.3.7"
 
     // libraries for jxbrowser
-    compile "com.teamdev.jxbrowser:jxbrowser-cross-platform:+"
+    compile "com.teamdev.jxbrowser:jxbrowser-win64:+"
 }
 
 
