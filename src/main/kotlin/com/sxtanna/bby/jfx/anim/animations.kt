@@ -30,9 +30,7 @@ fun Node.fade(main: BBYWJfx, after: Long = 0L, speed: Long = 10L, dir: FadeDir =
     lateinit var listener: ChangeListener<Number>
 
     listener = ChangeListener { _, _, value ->
-        val value = value.toDouble()
-
-        if (value <= 0.0 || value >= 1.0) {
+        if (value.toDouble() <= 0.0 || value.toDouble() >= 1.0) {
             Platform.runLater(doneListener)
 
             task.cancel(true)
