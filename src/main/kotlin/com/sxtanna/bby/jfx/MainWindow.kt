@@ -312,7 +312,7 @@ class MainWindow : View("Best Buy Work") {
 
             BigViewLink(view.skus)
 
-            WebPagesLink("DOT COM", "https://www.bestbuy.com", "main best buy website")
+            WebPagesLink("DOT COM", "https://www.bestbuy.com/", "main best buy website")
             WebPagesLink("Translate", "https://translate.google.com/", "opens google translate")
 
             Resource.values().forEach {
@@ -419,7 +419,10 @@ class MainWindow : View("Best Buy Work") {
                             view.show(view.brow)
                         }
 
-                        view.brow.load(url)
+                        if (view.brow.brow.url != url) {
+                            view.brow.load(url)
+                        }
+
                         text.text = name
                         search.submitUpdate("")
                     }
