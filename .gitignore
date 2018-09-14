@@ -14,3 +14,6 @@ build/
 
 # Let's not leak company documents
 /src/main/resources/com/sxtanna/bby/jfx/docs/docs.korm
+
+# Let's move my info from the actual program
+/src/main/resources/com/sxtanna/bby/jfx/docs/info.korm
