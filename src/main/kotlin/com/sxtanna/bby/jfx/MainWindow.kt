@@ -66,7 +66,7 @@ class MainWindow : View("Best Buy Work") {
     val panels = AppPanels()
     val search = AppSearch()
 
-    lateinit var info: Employee
+    val info: Employee
 
 
     init {
@@ -75,7 +75,7 @@ class MainWindow : View("Best Buy Work") {
         setupRoot()
 
         Resource.load(korm, main.resourceAsStream("docs/docs.korm"))
-        info = korm.pull(main.resourceAsStream("docs/info.korm")).to<Employee>() ?: Employee.DEFAULT
+        info = korm.pull(main.resourceAsStream("docs/info.korm")).to() ?: Employee.DEFAULT
 
         setupTool()
         setupSideL()
