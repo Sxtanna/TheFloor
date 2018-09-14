@@ -81,9 +81,6 @@ class MainWindow : View("Best Buy Work") {
         setupSideL()
         setupSideR()
 
-        HBox.setHgrow(sideL, Priority.ALWAYS)
-        HBox.setHgrow(sideR, Priority.ALWAYS)
-
         sideL.minWidthProperty().bind(main.stage.minWidthProperty().divide(2.0))
         sideL.maxWidthProperty().bind(main.stage.minWidthProperty().divide(2.0))
 

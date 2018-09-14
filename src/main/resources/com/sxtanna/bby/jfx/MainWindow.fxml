@@ -103,7 +103,8 @@
 
          <AnchorPane fx:id="sideL"
                      prefHeight="200.0"
-                     prefWidth="200.0">
+                     prefWidth="200.0"
+                     HBox.hgrow="ALWAYS">
 
 
             <ScrollPane fx:id="scrl"
@@ -124,7 +125,8 @@
 
          <AnchorPane fx:id="sideR"
                      prefHeight="200.0"
-                     prefWidth="200.0"/>
+                     prefWidth="200.0"
+                     HBox.hgrow="ALWAYS"/>
 
 
       </HBox>
