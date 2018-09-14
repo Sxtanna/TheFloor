@@ -89,9 +89,9 @@ class MainWindow : View("Best Buy Work") {
 
         // default focus
         root.requestFocus()
-
-        tool.setOnMouseClicked { }
-        root.setOnMouseClicked { root.requestFocus() }
+        root.setOnMouseClicked {
+            root.requestFocus()
+        }
 
         splash.init()
         splash.fade()
@@ -104,11 +104,11 @@ class MainWindow : View("Best Buy Work") {
         root.setOnScroll {
             if (it.isControlDown.not() || view.view() !== view.brow) return@setOnScroll
 
-            when(it.deltaY) {
-                +40.0 -> { // scroll up
+            when {
+                it.deltaY > 0 -> { // scroll up
                     view.brow.brow.zoomIn()
                 }
-                -40.0 -> { // scroll down
+                it.deltaY < 0 -> { // scroll down
                     view.brow.brow.zoomOut()
                 }
             }
@@ -138,7 +138,8 @@ class MainWindow : View("Best Buy Work") {
                 MouseButton.SECONDARY -> {
                     view.next()
                 }
-                else -> {}
+                else -> {
+                }
             }
         }
     }
