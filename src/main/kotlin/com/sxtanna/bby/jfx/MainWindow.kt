@@ -186,7 +186,7 @@ class MainWindow : View("Best Buy Work") {
             alignment = Pos.CENTER_RIGHT
         }
 
-        vbox.add(Label("Ranald T.").apply {
+        vbox.add(Label("${info.name.fore} ${info.name.last.first()}.").apply {
             style(true) {
                 fontSize = Dimension(45.0, Dimension.LinearUnits.px)
                 fontWeight = FontWeight.BOLD
@@ -195,7 +195,7 @@ class MainWindow : View("Best Buy Work") {
             }
         })
 
-        vbox.add(Label("#1092").apply {
+        vbox.add(Label("#${info.store.number}").apply {
             style(true) {
                 fontSize = Dimension(20.0, Dimension.LinearUnits.px)
                 fontWeight = FontWeight.BOLD
@@ -322,7 +322,7 @@ class MainWindow : View("Best Buy Work") {
 
         inner class WelcomePanel : Panel() {
 
-            override fun fillPanel() = buildTitleSubTitle("Ranald Taylor", "ranald.taylor@bestbuy.com", titleBlock = {
+            override fun fillPanel() = buildTitleSubTitle("${info.name.fore} ${info.name.last}", "${info.name.fore}.${info.name.last}@bestbuy.com".toLowerCase(), titleBlock = {
                 it.style(true) {
                     this.textFill = Color.rgb(BB_BLUE_R, BB_BLUE_G, BB_BLUE_B)
                 }
