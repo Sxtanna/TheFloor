@@ -1,6 +1,7 @@
 package com.sxtanna.bby.base
 
 import javafx.beans.binding.DoubleBinding
+import javafx.beans.binding.DoubleExpression
 import javafx.beans.property.DoubleProperty
 import javafx.beans.value.ObservableDoubleValue
 import javafx.geometry.Insets
@@ -37,6 +38,10 @@ fun DoubleBinding.max(value: Double): ObservableDoubleValue {
 
 fun DoubleBinding.within(min: Double, max: Double): ObservableDoubleValue {
     return this.doubleBinding { (it?.toDouble() ?: 0.0).coerceIn(min, max) }
+}
+
+fun DoubleBinding.max(property: DoubleExpression): ObservableDoubleValue {
+    return this.doubleBinding { (it?.toDouble() ?: 0.0).coerceAtMost(property.value) }
 }
 
 
