@@ -60,7 +60,6 @@ class SVGLoader(val app: BBYWJfx) {
 
 
         fun transcode(resource : URL, width : Double, height : Double) : BufferedImage {
-
             val transcoder = Transcoder()
 
             val hints = TranscodingHints(defaultHints)
