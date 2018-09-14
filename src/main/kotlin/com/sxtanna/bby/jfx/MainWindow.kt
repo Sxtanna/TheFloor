@@ -26,7 +26,6 @@ import javafx.scene.text.FontWeight
 import tornadofx.*
 import java.net.URLEncoder
 
-
 class MainWindow : View("Best Buy Work") {
 
     val main by lazy { BBYWJfx.inst }
