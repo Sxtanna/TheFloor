@@ -1,5 +1,6 @@
 package com.sxtanna.bby.jfx
 
+import com.jfoenix.controls.JFXRippler
 import com.jfoenix.controls.JFXTextField
 import com.jfoenix.effects.JFXDepthManager
 import com.sxtanna.bby.base.*
@@ -12,11 +13,12 @@ import com.sxtanna.bby.jfx.view.BigViewManager
 import com.sxtanna.korm.Korm
 import javafx.geometry.Pos
 import javafx.scene.Node
-import javafx.scene.control.*
+import javafx.scene.control.Label
+import javafx.scene.control.ScrollPane
+import javafx.scene.control.ToolBar
 import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.*
-
 import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.text.Font
@@ -123,25 +125,17 @@ class MainWindow : View("Best Buy Work") {
         pane.prefWidthProperty().bind(bord.prefWidthProperty().subtract(800).within(900.0, 1800.0))
 
         setupToolSearch()
+        setupToolBigNav()
         setupToolPerson()
 
         tool.setOnMouseClicked {
             root.requestFocus()
-
-            when (it.button) {
-                MouseButton.PRIMARY -> {
-                    view.prev()
-                }
-                MouseButton.SECONDARY -> {
-                    view.next()
-                }
-                else -> {
-                }
-            }
         }
     }
 
     private fun setupToolSearch() {
+        JFXDepthManager.setDepth(rect, 1)
+
         rect.widthProperty().bind(pane.prefWidthProperty().subtract(50))
 
         text.maxWidthProperty().bind(rect.widthProperty())
@@ -176,6 +170,31 @@ class MainWindow : View("Best Buy Work") {
                     text.selectAll()
                 }
             }
+        }
+    }
+
+    private fun setupToolBigNav() {
+        val buttonL = JFXRippler(main.svgLoader.loadImageView("icon/arrow_l.svg", 120.0), JFXRippler.RipplerMask.CIRCLE).apply {
+            ripplerFill = Color.WHITE
+            setOnMouseClicked {
+                view.prev()
+            }
+        }
+        val buttonR = JFXRippler(main.svgLoader.loadImageView("icon/arrow_r.svg", 120.0), JFXRippler.RipplerMask.CIRCLE).apply {
+            ripplerFill = Color.WHITE
+            setOnMouseClicked {
+                view.next()
+            }
+        }
+
+        JFXDepthManager.setDepth(buttonL, 1)
+        JFXDepthManager.setDepth(buttonR, 1)
+
+
+        val hbox = HBox(40.0, buttonL, buttonR)
+
+        bord.center = hbox.borderpaneConstraints {
+            alignment = Pos.CENTER
         }
     }
 
