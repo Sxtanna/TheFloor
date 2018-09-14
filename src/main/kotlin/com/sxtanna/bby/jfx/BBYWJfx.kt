@@ -6,8 +6,6 @@ import com.sxtanna.bby.jfx.base.FullScreenManager
 import com.sxtanna.bby.jfx.svg.SVGLoader
 import javafx.application.Platform
 import javafx.scene.image.Image
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyCombination
 import javafx.stage.Stage
 import tornadofx.App
 import java.io.InputStream
@@ -22,7 +20,7 @@ class BBYWJfx : App(MainWindow::class) {
     val svgLoader = SVGLoader(this)
     val scheduler = Executors.newScheduledThreadPool(10)
 
-    val fullScreenManager = FullScreenManager(this)
+    val fsManager = FullScreenManager(this)
 
 
     init {
@@ -53,7 +51,7 @@ class BBYWJfx : App(MainWindow::class) {
 
         stage.scene.stylesheets.add(resource("css/base.css").toExternalForm())
 
-        fullScreenManager.init()
+        fsManager.init()
     }
 
 
