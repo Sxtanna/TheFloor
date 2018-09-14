@@ -2,17 +2,13 @@ package com.sxtanna.bby.jfx.view
 
 import com.sxtanna.bby.base.anchorAllSides
 import com.sxtanna.bby.jfx.MainWindow
-import com.sxtanna.bby.jfx.view.col.BigColorView
+import com.sxtanna.bby.jfx.view.sku.SkuSearchBigView
 import com.sxtanna.bby.jfx.view.web.BBYWBrowser
-import javafx.scene.paint.Color
 
 class BigViewManager(private val main: MainWindow) {
 
     val brow = BBYWBrowser(main)
-
-    val colR = BigColorView(Color.RED)
-    val colG = BigColorView(Color.GREEN)
-    val colB = BigColorView(Color.BLUE)
+    val skus = SkuSearchBigView(main)
 
 
     private var index = 0
@@ -34,12 +30,17 @@ class BigViewManager(private val main: MainWindow) {
     }
 
 
+    fun view(): BigView {
+        return views[index]
+    }
+
     fun hide() {
         main.sideR.children.clear()
     }
 
     fun show(view: BigView = views[index]) {
         view.show(main.sideR)
+        this.index = views.indexOf(view).takeIf { it != -1 } ?: 0
     }
 
 
@@ -47,9 +48,7 @@ class BigViewManager(private val main: MainWindow) {
         setupBrowser()
 
         views += brow
-        views += colR
-        views += colG
-        views += colB
+        views += skus
 
         initViews()
     }
