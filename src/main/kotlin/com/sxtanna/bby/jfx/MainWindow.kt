@@ -3,8 +3,11 @@ package com.sxtanna.bby.jfx
 import com.jfoenix.controls.JFXTextField
 import com.jfoenix.effects.JFXDepthManager
 import com.sxtanna.bby.base.*
+import com.sxtanna.bby.data.Employee
+import com.sxtanna.bby.data.Resource
 import com.sxtanna.bby.jfx.anim.FadeDir
 import com.sxtanna.bby.jfx.anim.fade
+import com.sxtanna.bby.jfx.view.BigView
 import com.sxtanna.bby.jfx.view.BigViewManager
 import com.sxtanna.korm.Korm
 import javafx.geometry.Pos
@@ -24,7 +27,7 @@ import java.net.URLEncoder
 
 class MainWindow : View("Best Buy Work") {
 
-    private val main by lazy { BBYWJfx.inst }
+    val main by lazy { BBYWJfx.inst }
 
 
     override val root by fxml<AnchorPane>()
@@ -40,7 +43,7 @@ class MainWindow : View("Best Buy Work") {
     private val text by fxid<JFXTextField>()
 
     // account
-    private val anch by fxid<BorderPane>()
+    private val anch by fxid<HBox>()
 
 
     // body
@@ -54,7 +57,7 @@ class MainWindow : View("Best Buy Work") {
     private val tile = VBox()
 
     // side r
-    private val view = BigViewManager(this)
+    val view = BigViewManager(this)
 
 
     val korm = Korm()
@@ -63,13 +66,16 @@ class MainWindow : View("Best Buy Work") {
     val panels = AppPanels()
     val search = AppSearch()
 
+    lateinit var info: Employee
+
 
     init {
+        view.setupViews()
+
         setupRoot()
 
         Resource.load(korm, main.resourceAsStream("docs/docs.korm"))
-
-        view.setupViews()
+        info = korm.pull(main.resourceAsStream("docs/info.korm")).to<Employee>() ?: Employee.DEFAULT
 
         setupTool()
         setupSideL()
@@ -84,11 +90,8 @@ class MainWindow : View("Best Buy Work") {
         // default focus
         root.requestFocus()
 
-        //tool.setOnMouseClicked { root.requestFocus() }
+        tool.setOnMouseClicked { }
         root.setOnMouseClicked { root.requestFocus() }
-
-        tool.hide()
-        body.hide()
 
         splash.init()
         splash.fade()
@@ -97,6 +100,19 @@ class MainWindow : View("Best Buy Work") {
 
     private fun setupRoot() {
         root.background = backgroundFill(Color.rgb(BG_R, BG_G, BG_B))
+
+        root.setOnScroll {
+            if (it.isControlDown.not() || view.view() !== view.brow) return@setOnScroll
+
+            when(it.deltaY) {
+                +40.0 -> { // scroll up
+                    view.brow.brow.zoomIn()
+                }
+                -40.0 -> { // scroll down
+                    view.brow.brow.zoomOut()
+                }
+            }
+        }
     }
 
 
@@ -113,6 +129,8 @@ class MainWindow : View("Best Buy Work") {
         setupToolPerson()
 
         tool.setOnMouseClicked {
+            root.requestFocus()
+
             when (it.button) {
                 MouseButton.PRIMARY -> {
                     view.prev()
@@ -120,9 +138,7 @@ class MainWindow : View("Best Buy Work") {
                 MouseButton.SECONDARY -> {
                     view.next()
                 }
-                else -> {
-
-                }
+                else -> {}
             }
         }
     }
@@ -166,7 +182,30 @@ class MainWindow : View("Best Buy Work") {
     }
 
     private fun setupToolPerson() {
-        anch.center = main.svgLoader.loadImageView("icon/person.svg", 120.0)
+        val vbox = VBox().apply {
+            alignment = Pos.CENTER_RIGHT
+        }
+
+        vbox.add(Label("Ranald T.").apply {
+            style(true) {
+                fontSize = Dimension(45.0, Dimension.LinearUnits.px)
+                fontWeight = FontWeight.BOLD
+                fontFamily = "Lato Bold"
+                textFill = Color.WHITE
+            }
+        })
+
+        vbox.add(Label("#1092").apply {
+            style(true) {
+                fontSize = Dimension(20.0, Dimension.LinearUnits.px)
+                fontWeight = FontWeight.BOLD
+                fontFamily = "Lato Bold"
+                textFill = Color.WHITE
+            }
+        })
+
+        anch.add(vbox)
+        anch.add(main.svgLoader.loadImageView("icon/person.svg", 130.0))
     }
 
 
@@ -207,6 +246,9 @@ class MainWindow : View("Best Buy Work") {
 
 
         fun init() {
+            tool.hide()
+            body.hide()
+
             root.add(back)
 
             back.prefWidthProperty().bind(root.widthProperty())
@@ -252,11 +294,14 @@ class MainWindow : View("Best Buy Work") {
         fun init(pane: Pane) {
             WelcomePanel()
 
+            BigViewLink(view.skus)
+
             Resource.values().forEach {
                 DocumentLink(it)
             }
 
             WebPagesLink("DOT COM", "https://www.bestbuy.com", "main best buy website")
+            WebPagesLink("Translate", "https://translate.google.com/", "opens google translate")
             WebPagesLink("My HR", "https://hr.bestbuy.com", "best buy human resources")
             WebPagesLink("TLC", "https://mytlc.bestbuy.com/etm/", "access time & labor center")
             WebPagesLink("Employee Hub", "https://hub.bestbuy.com", "best buy employee hub")
@@ -285,6 +330,32 @@ class MainWindow : View("Best Buy Work") {
 
         }
 
+        inner class BigViewLink(private val view: BigView) : Panel() {
+
+            override fun fillPanel() = buildTitleSubTitle(view.name, view.desc, titleBlock = {
+                it.style(true) {
+                    fontSize = Dimension(45.0, Dimension.LinearUnits.px)
+                }
+
+                setOnMouseClicked { click ->
+                    if (click.button != MouseButton.PRIMARY) return@setOnMouseClicked
+
+                    if (Tracker.checkCurrent(this@BigViewLink)) {
+                        this@MainWindow.view.hide()
+                        this@MainWindow.view.show(view)
+
+                        text.text = view.name
+                        search.submitUpdate("")
+                    }
+                }
+            })
+
+            override fun showNamed(text: String): Boolean {
+                return view.name.contains(text, true)
+            }
+
+        }
+
         inner class DocumentLink(private val doc: Resource) : Panel() {
 
             override fun fillPanel() = buildTitleSubTitle(doc.name, "opens on right panel", titleBlock = {
@@ -292,8 +363,15 @@ class MainWindow : View("Best Buy Work") {
                     fontSize = Dimension(45.0, Dimension.LinearUnits.px)
                 }
 
-                setOnMouseClicked { _ ->
+                setOnMouseClicked { click ->
+                    if (click.button != MouseButton.PRIMARY) return@setOnMouseClicked
+
                     if (Tracker.checkCurrent(this@DocumentLink)) {
+                        if (view.view() != view.brow) {
+                            view.hide()
+                            view.show(view.brow)
+                        }
+
                         view.brow.load(doc.link)
                         text.text = doc.name
                         search.submitUpdate("")
@@ -314,8 +392,15 @@ class MainWindow : View("Best Buy Work") {
                     fontSize = Dimension(45.0, Dimension.LinearUnits.px)
                 }
 
-                setOnMouseClicked { _ ->
+                setOnMouseClicked { click ->
+                    if (click.button != MouseButton.PRIMARY) return@setOnMouseClicked
+
                     if (Tracker.checkCurrent(this@WebPagesLink)) {
+                        if (view.view() != view.brow) {
+                            view.hide()
+                            view.show(view.brow)
+                        }
+
                         view.brow.load(url)
                         text.text = name
                         search.submitUpdate("")
