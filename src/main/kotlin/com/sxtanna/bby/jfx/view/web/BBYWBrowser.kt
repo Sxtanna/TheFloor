@@ -8,6 +8,10 @@ import javafx.scene.Node
 
 class BBYWBrowser(private val main: MainWindow) : BigView {
 
+    override val name = "Browser"
+    override val desc = "literally an embedded web browser"
+
+
     val brow = Browser()
     val view = BrowserView(brow)
 
