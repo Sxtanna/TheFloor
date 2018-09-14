@@ -353,7 +353,7 @@ class MainWindow : View("Best Buy Work") {
                 it.style(true) {
                     fontSize = Dimension(45.0, Dimension.LinearUnits.px)
                 }
-
+            }) {
                 setOnMouseClicked { click ->
                     if (click.button != MouseButton.PRIMARY) return@setOnMouseClicked
 
@@ -365,7 +365,7 @@ class MainWindow : View("Best Buy Work") {
                         search.submitUpdate("")
                     }
                 }
-            })
+            }
 
             override fun showNamed(text: String): Boolean {
                 return view.name.contains(text, true)
@@ -379,7 +379,7 @@ class MainWindow : View("Best Buy Work") {
                 it.style(true) {
                     fontSize = Dimension(45.0, Dimension.LinearUnits.px)
                 }
-
+            }) {
                 setOnMouseClicked { click ->
                     if (click.button != MouseButton.PRIMARY) return@setOnMouseClicked
 
@@ -394,7 +394,7 @@ class MainWindow : View("Best Buy Work") {
                         search.submitUpdate("")
                     }
                 }
-            })
+            }
 
             override fun showNamed(text: String): Boolean {
                 return doc.name.contains(text, true)
@@ -408,7 +408,7 @@ class MainWindow : View("Best Buy Work") {
                 it.style(true) {
                     fontSize = Dimension(45.0, Dimension.LinearUnits.px)
                 }
-
+            }, rectBlock = {
                 setOnMouseClicked { click ->
                     if (click.button != MouseButton.PRIMARY) return@setOnMouseClicked
 
@@ -498,9 +498,10 @@ class MainWindow : View("Best Buy Work") {
                 return node
             }
 
-            protected fun buildTitleSubTitle(titleText: String, subTitleText: String = "", titleBlock: VBox.(Label) -> Unit = { }, subTitleBlock: VBox.(Label) -> Unit = { }) {
+            protected fun buildTitleSubTitle(titleText: String, subTitleText: String = "", titleBlock: VBox.(Label) -> Unit = { }, subTitleBlock: VBox.(Label) -> Unit = { }, rectBlock: Node.() -> Unit = { }) {
                 val vbox = VBox().apply {
                     alignment = Pos.CENTER
+                    isMouseTransparent = true
                 }
 
                 vbox.add(Label(titleText).apply {
@@ -517,6 +518,8 @@ class MainWindow : View("Best Buy Work") {
                         fontFamily = "Lato"
                     }
                 }.apply { vbox.subTitleBlock(this) })
+
+                rectBlock(tilePane.children.first())
 
                 push(vbox)
             }
