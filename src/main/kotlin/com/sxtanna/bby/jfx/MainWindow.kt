@@ -312,14 +312,15 @@ class MainWindow : View("Best Buy Work") {
 
             BigViewLink(view.skus)
 
+            WebPagesLink("DOT COM", "https://www.bestbuy.com", "main best buy website")
+            WebPagesLink("Translate", "https://translate.google.com/", "opens google translate")
+
             Resource.values().forEach {
                 DocumentLink(it)
             }
 
-            WebPagesLink("DOT COM", "https://www.bestbuy.com", "main best buy website")
-            WebPagesLink("Translate", "https://translate.google.com/", "opens google translate")
             WebPagesLink("Warranties & Manufacturer", "https://www.bestbuy.com/site/help-topics/warranties-and-manufacturer-contact/pcmcat204400050042.c?id=pcmcat204400050042", "contact information")
-            WebPagesLink("My HR", "https://hr.bestbuy.com", "best buy human resources")
+            //WebPagesLink("My HR", "https://hr.bestbuy.com", "best buy human resources") // this is useless for me atm
             WebPagesLink("TLC", "https://mytlc.bestbuy.com/etm/", "access time & labor center")
             WebPagesLink("Employee Hub", "https://hub.bestbuy.com", "best buy employee hub")
 
