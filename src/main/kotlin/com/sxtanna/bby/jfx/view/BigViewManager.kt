@@ -2,6 +2,7 @@ package com.sxtanna.bby.jfx.view
 
 import com.sxtanna.bby.base.anchorAllSides
 import com.sxtanna.bby.jfx.MainWindow
+import com.sxtanna.bby.jfx.view.cal.CalcBigView
 import com.sxtanna.bby.jfx.view.sku.SkuSearchBigView
 import com.sxtanna.bby.jfx.view.web.BBYWBrowser
 
@@ -9,6 +10,7 @@ class BigViewManager(private val main: MainWindow) {
 
     val brow = BBYWBrowser(main)
     val skus = SkuSearchBigView(main)
+    val calc = CalcBigView()
 
 
     private var index = 0
@@ -49,6 +51,7 @@ class BigViewManager(private val main: MainWindow) {
 
         views += brow
         views += skus
+        views += calc
 
         initViews()
     }
