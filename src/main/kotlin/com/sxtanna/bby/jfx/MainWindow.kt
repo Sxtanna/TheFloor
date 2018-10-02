@@ -320,9 +320,10 @@ class MainWindow : View("Best Buy Work") {
             }
 
             WebPagesLink("Warranties & Manufacturer", "https://www.bestbuy.com/site/help-topics/warranties-and-manufacturer-contact/pcmcat204400050042.c?id=pcmcat204400050042", "contact information")
+            WebPagesLink("TheFloor Source Code", "https://gh.sxtanna.com/TheFloor", "view this app's source")
             //WebPagesLink("My HR", "https://hr.bestbuy.com", "best buy human resources") // this is useless for me atm
-            WebPagesLink("TLC", "https://mytlc.bestbuy.com/etm/", "access time & labor center")
-            WebPagesLink("Employee Hub", "https://hub.bestbuy.com", "best buy employee hub")
+            //WebPagesLink("TLC", "https://mytlc.bestbuy.com/etm/", "access time & labor center")
+            //WebPagesLink("Employee Hub", "https://hub.bestbuy.com", "best buy employee hub")
 
             seeing += panels
 

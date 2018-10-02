@@ -43,6 +43,7 @@ class BBYWJfx : App(MainWindow::class) {
         stage.minHeight = SP_H / 2.0
 
         stage.centerOnScreen()
+        stage.isFullScreen = true
 
         stage.setOnCloseRequest {
             scheduler.shutdownNow()
