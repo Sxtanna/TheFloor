@@ -5,7 +5,6 @@ import com.sxtanna.bby.base.anchorAllSides
 import com.sxtanna.bby.base.backgroundFill
 import com.sxtanna.bby.calc.Calculator
 import com.sxtanna.bby.jfx.view.BigView
-import javafx.application.Platform
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Label
@@ -40,8 +39,6 @@ class CalcBigView : BigView {
             alignment = Pos.CENTER
         }
 
-        //stack.background = backgroundFill(Color.ORANGE)
-
         buildResult()
         buildCalculator()
     }
@@ -66,24 +63,6 @@ class CalcBigView : BigView {
         resultO.style {
             textFill = Color.DIMGRAY
             fontSize = Dimension(50.0, Dimension.LinearUnits.px)
-        }
-
-        resultI.textProperty().onChange {
-            //updateText(resultI)
-
-            /*val clipped = Utils.computeClippedText(resultI.font, it, resultI.width, resultI.textOverrun, resultI.ellipsisString) ?: return@onChange
-            if (clipped.isEmpty()) return@onChange
-
-
-            if (resultI.text.length > clipped.length) {
-                Platform.runLater {
-                    println("Shrinking font ${resultI.font.size}")
-                    resultI.style {
-                        fontSize = Dimension(resultI.font.size - 20.0, Dimension.LinearUnits.px)
-                    }
-                }
-            }*/
-
         }
 
         stack.add(vbox)
@@ -167,7 +146,7 @@ class CalcBigView : BigView {
         numpad.forEach {
             if (it.text == "=") return@forEach
 
-            it.setOnMouseClicked { click ->
+            it.setOnMouseClicked { _ ->
                 resultI.text = if (nextIsNegative) {
                     "${resultI.text}-${it.text}"
                 }
@@ -185,7 +164,7 @@ class CalcBigView : BigView {
         }
 
         operator.drop(1).forEach { op ->
-            op.setOnMouseClicked { click ->
+            op.setOnMouseClicked { _ ->
                 if (operator.any { resultI.text.trimEnd().endsWith(it.text) }) {
 
                     if (op.text == "-") {
@@ -216,25 +195,6 @@ class CalcBigView : BigView {
         }
         catch (ex: Exception) {
             resultO.text = "ERR"
-        }
-    }
-
-    private fun updateText(label: Label) {
-        Platform.runLater {
-            var newFontSize = label.font.size
-            var clippedText = Utils.computeClippedText(label.font, label.text, label.width, label.textOverrun, label.ellipsisString)
-
-            while (!label.text.equals(clippedText) && newFontSize > 0.5) {
-                println("fontSize = $newFontSize, clippedText = $clippedText")
-
-                newFontSize -= 20.0
-
-                label.style(true) {
-                    fontSize = Dimension(newFontSize, Dimension.LinearUnits.px)
-                }
-
-                clippedText = Utils.computeClippedText(label.font, label.text, label.width, label.textOverrun, label.ellipsisString)
-            }
         }
     }
 
